@@ -1,5 +1,6 @@
 (require 'bui)
 (require 's)
+(require 'cl)
 
 (defun mj-server->entry (server)
   `((id   . ,server)
@@ -32,7 +33,7 @@
 		   (concat "/ssh:" (car result) "|sudo:root@" (car result) ":/")
 		   hosts)
 		  (pop result)))
-            (when (s-suffix? ".intr" host)
+            (when (and (not (s-starts-with? "*" host)) (s-suffix? ".intr" host))
               (push host hosts)))))
       (when (string-match "Include +\\(.+\\)$" host)
         (setq include-file (match-string 1 host))
@@ -40,7 +41,7 @@
           (setq include-file (concat (file-name-as-directory "~/.ssh") include-file)))
         (when (file-exists-p include-file)
           (setq hosts (append hosts (counsel-tramp--candidates include-file))))))
-    (reverse hosts)))
+    (remove-duplicates (reverse hosts))))
 
 (defun mj-servers-get-entries ()
   (mapcar 'mj-server->entry (mj-hosts--candidates)))
