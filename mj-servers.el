@@ -18,9 +18,23 @@
             "kvm33.intr" "kvm34.intr" "kvm35.intr" "kvm36.intr" "kvm37.intr"
             "kvm5.intr" "kvm6.intr" "kvm9.intr")))
 
+(defvar mj-servers-list-default-hint
+  '(("\\[mj-servers-list-tramp]") " open TRAMP session;\n"
+    ("\\[mj-servers-list-open-terminal]") " open XTerm with SSH session; "
+    ("\\[mj-servers-list-xpanes-open-terminal]") " open XTerm with xpanes and SSH sessions; "
+    ("\\[mj-servers-list-xpanes-open-top]") " open XTerm with SSH session and top;\n"
+    ("\\[mj-servers-list-xpanes-open-tail-taskexecutor]") " open XTerm and tail taskexecutor logs; "))
+
+(defun mj-servers-list-hint ()
+  (bui-format-hints
+   mj-servers-list-default-hint
+   (bui-default-hint)))
+
 (bui-define-interface mj-servers list
   :buffer-name "*Majordomo Servers*"
   :get-entries-function 'mj-servers-get-entries
+  :describe-function 'mj-servers-list-describe
+  :hint 'mj-servers-list-hint
   :format '((name nil 30 t))
   :sort-key '(name))
 
