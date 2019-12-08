@@ -1,4 +1,5 @@
 (require 'bui)
+(require 's)
 
 (defun mj-server->entry (server)
   `((id   . ,server)
@@ -31,9 +32,8 @@
 		   (concat "/ssh:" (car result) "|sudo:root@" (car result) ":/")
 		   hosts)
 		  (pop result)))
-	    (push
-	     (concat host)
-	     hosts))))
+            (when (s-suffix? ".intr" host)
+              (push host hosts)))))
       (when (string-match "Include +\\(.+\\)$" host)
         (setq include-file (match-string 1 host))
         (when (not (file-name-absolute-p include-file))
