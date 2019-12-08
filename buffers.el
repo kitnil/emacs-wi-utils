@@ -40,19 +40,27 @@
               (terminal-here (concat "/ssh:" host ":"))))
           (bui-list-get-marked-args 'general)))
 
-(defun mj-installed-servers-list-xpanes-terminal (hosts)
+(defun mj-installed-servers-list-xpanes-terminal (hosts command)
   (start-process "xterm" nil "xterm" "-bg" "white" "-fg" "black" "+sb" "-title" "xpanes" "-e"
-                 (mapconcat 'identity `(,(format "%s" "xpanes -c 'ssh {}'") ,@hosts) " ")))
+                 (mapconcat 'identity `(,(format "%s" (format "xpanes -c '%s'" command)) ,@hosts) " ")))
 
 (defun mj-installed-servers-list-xpanes-open-terminal ()
   "Display packages placed in the location at point."
   (interactive)
-  (mj-installed-servers-list-xpanes-terminal (mapcar #'car (bui-list-get-marked-args 'general))))
+  (mj-installed-servers-list-xpanes-terminal (mapcar #'car (bui-list-get-marked-args 'general))
+                                             "ssh {}"))
+
+(defun mj-installed-servers-list-xpanes-open-top ()
+  "Display packages placed in the location at point."
+  (interactive)
+  (mj-installed-servers-list-xpanes-terminal (mapcar #'car (bui-list-get-marked-args 'general))
+                                             "ssh -t {} -- top"))
 
 (let ((map mj-installed-servers-list-mode-map))
   (define-key map (kbd "f") 'mj-installed-servers-list-tramp)
   (define-key map (kbd "s") 'mj-installed-servers-list-open-terminal)
-  (define-key map (kbd "S") 'mj-installed-servers-list-xpanes-open-terminal))
+  (define-key map (kbd "S") 'mj-installed-servers-list-xpanes-open-terminal)
+  (define-key map (kbd "t") 'mj-installed-servers-list-xpanes-open-top))
 
 (defun buffers ()
   "Display a list of buffers."
