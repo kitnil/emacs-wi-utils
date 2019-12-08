@@ -32,6 +32,14 @@
               (find-file (concat "/ssh:" host ":"))))
           (bui-list-get-marked-args 'general)))
 
+(defun mj-installed-servers-list-ping ()
+  "Display packages placed in the location at point."
+  (interactive)
+  (mapcar (lambda (entry)
+            (let ((host (car entry)))
+              (ping host)))
+          (bui-list-get-marked-args 'general)))
+
 (defun mj-installed-servers-list-open-terminal ()
   "Display packages placed in the location at point."
   (interactive)
@@ -40,9 +48,13 @@
               (terminal-here (concat "/ssh:" host ":"))))
           (bui-list-get-marked-args 'general)))
 
+(defvar mj-installed-servers-list-xterm-command
+  '("xterm" "-bg" "white" "-fg" "black" "+sb" "-title" "xpanes" "-e"))
+
 (defun mj-installed-servers-list-xpanes-terminal (hosts command)
-  (start-process "xterm" nil "xterm" "-bg" "white" "-fg" "black" "+sb" "-title" "xpanes" "-e"
-                 (mapconcat 'identity `(,(format "%s" (format "xpanes -c '%s'" command)) ,@hosts) " ")))
+  (apply #'start-process "xterm" nil
+         `(,@mj-installed-servers-list-xterm-command
+           ,(mapconcat 'identity `(,(format "%s" (format "xpanes -c '%s'" command)) ,@hosts) " "))))
 
 (defun mj-installed-servers-list-xpanes-open-terminal ()
   "Display packages placed in the location at point."
