@@ -56,11 +56,18 @@
   (mj-installed-servers-list-xpanes-terminal (mapcar #'car (bui-list-get-marked-args 'general))
                                              "ssh -t {} -- top"))
 
+(defun mj-installed-servers-list-xpanes-open-tail-taskexecutor ()
+  "Display packages placed in the location at point."
+  (interactive)
+  (mj-installed-servers-list-xpanes-terminal (mapcar #'car (bui-list-get-marked-args 'general))
+                                             "ssh -t {} -- sudo tail -f /var/log/taskexecutor.log"))
+
 (let ((map mj-installed-servers-list-mode-map))
   (define-key map (kbd "f") 'mj-installed-servers-list-tramp)
   (define-key map (kbd "s") 'mj-installed-servers-list-open-terminal)
   (define-key map (kbd "S") 'mj-installed-servers-list-xpanes-open-terminal)
-  (define-key map (kbd "t") 'mj-installed-servers-list-xpanes-open-top))
+  (define-key map (kbd "t") 'mj-installed-servers-list-xpanes-open-top)
+  (define-key map (kbd "T") 'mj-installed-servers-list-xpanes-open-tail-taskexecutor))
 
 (defun buffers ()
   "Display a list of buffers."
