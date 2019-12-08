@@ -1,11 +1,11 @@
 (require 'bui)
 
-(defun buffers-buffer->entry (buffer)
-  `((id   . ,buffer)
-    (name . ,buffer)))
+(defun mj-server->entry (server)
+  `((id   . ,server)
+    (name . ,server)))
 
-(defun mj-installed-servers-get-entries ()
-  (mapcar 'buffers-buffer->entry
+(defun mj-servers-get-entries ()
+  (mapcar 'mj-server->entry
           '("web15.intr" "web16.intr" "web17.intr" "web18.intr" "web19.intr" "web20.intr"
             "web21.intr" "web22.intr" "web23.intr" "web25.intr" "web26.intr" "web27.intr" "web28.intr" "web29.intr" "web30.intr"
             "web31.intr" "web32.intr" "web33.intr" "web34.intr" "web35.intr" "web36.intr" "web37.intr"
@@ -18,13 +18,13 @@
             "kvm33.intr" "kvm34.intr" "kvm35.intr" "kvm36.intr" "kvm37.intr"
             "kvm5.intr" "kvm6.intr" "kvm9.intr")))
 
-(bui-define-interface mj-installed-servers list
+(bui-define-interface mj-servers list
   :buffer-name "*Majordomo Servers*"
-  :get-entries-function 'mj-installed-servers-get-entries
+  :get-entries-function 'mj-servers-get-entries
   :format '((name nil 30 t))
   :sort-key '(name))
 
-(defun mj-installed-servers-list-tramp ()
+(defun mj-servers-list-tramp ()
   "Display packages placed in the location at point."
   (interactive)
   (mapcar (lambda (entry)
@@ -32,7 +32,7 @@
               (find-file (concat "/ssh:" host ":"))))
           (bui-list-get-marked-args 'general)))
 
-(defun mj-installed-servers-list-ping ()
+(defun mj-servers-list-ping ()
   "Display packages placed in the location at point."
   (interactive)
   (mapcar (lambda (entry)
@@ -40,7 +40,7 @@
               (ping host)))
           (bui-list-get-marked-args 'general)))
 
-(defun mj-installed-servers-list-open-terminal ()
+(defun mj-servers-list-open-terminal ()
   "Display packages placed in the location at point."
   (interactive)
   (mapcar (lambda (entry)
@@ -48,40 +48,40 @@
               (terminal-here (concat "/ssh:" host ":"))))
           (bui-list-get-marked-args 'general)))
 
-(defvar mj-installed-servers-list-xterm-command
+(defvar mj-servers-list-xterm-command
   '("xterm" "-bg" "white" "-fg" "black" "+sb" "-title" "xpanes" "-e"))
 
-(defun mj-installed-servers-list-xpanes-terminal (hosts command)
+(defun mj-servers-list-xpanes-terminal (hosts command)
   (apply #'start-process "xterm" nil
-         `(,@mj-installed-servers-list-xterm-command
+         `(,@mj-servers-list-xterm-command
            ,(mapconcat 'identity `(,(format "%s" (format "xpanes -c '%s'" command)) ,@hosts) " "))))
 
-(defun mj-installed-servers-list-xpanes-open-terminal ()
+(defun mj-servers-list-xpanes-open-terminal ()
   "Display packages placed in the location at point."
   (interactive)
-  (mj-installed-servers-list-xpanes-terminal (mapcar #'car (bui-list-get-marked-args 'general))
+  (mj-servers-list-xpanes-terminal (mapcar #'car (bui-list-get-marked-args 'general))
                                              "ssh {}"))
 
-(defun mj-installed-servers-list-xpanes-open-top ()
+(defun mj-servers-list-xpanes-open-top ()
   "Display packages placed in the location at point."
   (interactive)
-  (mj-installed-servers-list-xpanes-terminal (mapcar #'car (bui-list-get-marked-args 'general))
+  (mj-servers-list-xpanes-terminal (mapcar #'car (bui-list-get-marked-args 'general))
                                              "ssh -t {} -- top"))
 
-(defun mj-installed-servers-list-xpanes-open-tail-taskexecutor ()
+(defun mj-servers-list-xpanes-open-tail-taskexecutor ()
   "Display packages placed in the location at point."
   (interactive)
-  (mj-installed-servers-list-xpanes-terminal (mapcar #'car (bui-list-get-marked-args 'general))
+  (mj-servers-list-xpanes-terminal (mapcar #'car (bui-list-get-marked-args 'general))
                                              "ssh -t {} -- sudo tail -f /var/log/taskexecutor.log"))
 
-(let ((map mj-installed-servers-list-mode-map))
-  (define-key map (kbd "f") 'mj-installed-servers-list-tramp)
-  (define-key map (kbd "s") 'mj-installed-servers-list-open-terminal)
-  (define-key map (kbd "S") 'mj-installed-servers-list-xpanes-open-terminal)
-  (define-key map (kbd "t") 'mj-installed-servers-list-xpanes-open-top)
-  (define-key map (kbd "T") 'mj-installed-servers-list-xpanes-open-tail-taskexecutor))
+(let ((map mj-servers-list-mode-map))
+  (define-key map (kbd "f") 'mj-servers-list-tramp)
+  (define-key map (kbd "s") 'mj-servers-list-open-terminal)
+  (define-key map (kbd "S") 'mj-servers-list-xpanes-open-terminal)
+  (define-key map (kbd "t") 'mj-servers-list-xpanes-open-top)
+  (define-key map (kbd "T") 'mj-servers-list-xpanes-open-tail-taskexecutor))
 
-(defun buffers ()
+(defun mj-installed-servers ()
   "Display a list of buffers."
   (interactive)
-  (bui-get-display-entries 'mj-installed-servers 'list))
+  (bui-get-display-entries 'mj-servers 'list))
