@@ -6,42 +6,15 @@
   `((id   . ,server)
     (name . ,server)))
 
-;; Code from counsel-tramp.
-(defun mj-hosts--candidates (&optional file)
-  "Collect candidates for counsel-tramp from FILE."
-  (let ((source (split-string
-                 (with-temp-buffer
-                   (insert-file-contents (or file "~/.ssh/config"))
-                   (buffer-string))
-                 "\n"))
-        (hosts (if file '() counsel-tramp-custom-connections)))
-    (dolist (host source)
-      (when (string-match "[H\\|h]ost +\\(.+?\\)$" host)
-	(setq host (match-string 1 host))
-	(if (string-match "[ \t\n\r]+\\'" host)
-	    (replace-match "" t t host))
-	(if (string-match "\\`[ \t\n\r]+" host)
-	    (replace-match "" t t host))
-        (unless (string= host "*")
-	  (if (string-match "[ ]+" host)
-	      (let ((result (split-string host " ")))
-		(while result
-		  (push
-		   (concat "/" tramp-default-method ":" (car result) ":")
-		   hosts)
-		  (push
-		   (concat "/ssh:" (car result) "|sudo:root@" (car result) ":/")
-		   hosts)
-		  (pop result)))
-            (when (and (not (s-starts-with? "*" host)) (s-suffix? ".intr" host))
-              (push host hosts)))))
-      (when (string-match "Include +\\(.+\\)$" host)
-        (setq include-file (match-string 1 host))
-        (when (not (file-name-absolute-p include-file))
-          (setq include-file (concat (file-name-as-directory "~/.ssh") include-file)))
-        (when (file-exists-p include-file)
-          (setq hosts (append hosts (counsel-tramp--candidates include-file))))))
-    (remove-duplicates (reverse hosts))))
+(defun mj-hosts--candidates ()
+  (seq-filter (lambda (str)
+                (string-suffix-p ".intr" str))
+              (mapcar (lambda (str)
+                        (car (split-string str " ")))
+                      (split-string (with-temp-buffer
+                                      (insert-file-contents (expand-file-name "~/.ssh/known_hosts"))
+                                      (buffer-string))
+                                    "\n"))))
 
 (defun mj-servers-get-entries ()
   (mapcar 'mj-server->entry (mj-hosts--candidates)))
