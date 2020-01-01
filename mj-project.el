@@ -28,6 +28,8 @@
 (require 'bui)
 (require 'ivy) ;used in `majordomo-ivy-find-project'
 
+(defvar mj-projects-direcotory "~/majordomo")
+
 (defun mj-project-candidates ()
   (delete-dups
    (seq-filter #'file-directory-p
@@ -37,7 +39,7 @@
                                  (directory-files dir t)))
                               (seq-filter #'file-directory-p
                                           (cddr ;skip "." and ".."
-                                           (directory-files (expand-file-name "~/majordomo") t))))))))
+                                           (directory-files (expand-file-name mj-projects-direcotory) t))))))))
 
 (defun mj-project-ivy ()
   "Find Majordomo project."
