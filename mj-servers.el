@@ -63,17 +63,16 @@
               (terminal-here (concat "/ssh:" host ":"))))
           (bui-list-get-marked-args 'general)))
 
-(defun mj-servers-list-xterm-command (hosts)
-  `("xterm" "-bg" "white" "-fg" "black" "+sb" "-title" "xpanes"
-    ,@(if (> (length hosts) 4)
-          '("-fa" "Monospace" "-fs" "6")
-        '())
-    "-e"))
+(defvar mj-servers-list-xterm-command
+  '("xterm" "-bg" "white" "-fg" "black" "+sb" "-title" "xpanes"))
 
 (defun mj-servers-list-xpanes-terminal (hosts command)
   (apply #'start-process "xterm" nil
-         `(,@(mj-servers-list-xterm-command hosts)
-           ,(mapconcat 'identity `(,(format "%s" (format "xpanes -c '%s'" command)) ,@hosts) " "))))
+         `(,@mj-servers-list-xterm-command
+           ,@(if (> (length hosts) 4)
+                 '("-fa" "Monospace" "-fs" "6")
+               '())
+           "-e" ,(mapconcat 'identity `(,(format "%s" (format "xpanes -c '%s'" command)) ,@hosts) " "))))
 
 (defun mj-servers-list-xpanes-open-terminal ()
   "Display packages placed in the location at point."
