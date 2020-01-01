@@ -92,7 +92,19 @@
   (mj-servers-list-xpanes-terminal (mapcar #'car (bui-list-get-marked-args 'general))
                                              "ssh -t {} -- sudo tail -f /var/log/taskexecutor.log"))
 
+(defun mj-servers-list-ansible-console (hosts)
+  (apply #'start-process "xterm" nil
+         `(,@mj-servers-list-xterm-command
+           "-bg" "black" "-fg" "white"
+           "-e" ,(mapconcat 'identity `(,(format "%s" (format "ansible-console --limit=%s" (string-join hosts ","))) ) " "))))
+
+(defun mj-servers-list-open-ansible-console ()
+  "Display packages placed in the location at point."
+  (interactive)
+  (mj-servers-list-ansible-console (mapcar #'car (bui-list-get-marked-args 'general))))
+
 (let ((map mj-servers-list-mode-map))
+  (define-key map (kbd "A") 'mj-servers-list-open-ansible-console)
   (define-key map (kbd "f") 'mj-servers-list-tramp)
   (define-key map (kbd "s") 'mj-servers-list-open-terminal)
   (define-key map (kbd "S") 'mj-servers-list-xpanes-open-terminal)
