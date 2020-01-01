@@ -54,6 +54,10 @@
 (defun mj-project-get-entries ()
   (mapcar 'mj-project->entry (mj-project-candidates)))
 
+(defun mj-project-list-describe (project)
+  (interactive)
+  (magit-status project))
+
 (bui-define-interface mj-project list
   :buffer-name "*Majordomo Project*"
   :get-entries-function 'mj-project-get-entries
