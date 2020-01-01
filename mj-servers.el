@@ -2,6 +2,8 @@
 (require 's)
 (require 'cl)
 
+(defvar mj-known-hosts "~/.ssh/known_hosts")
+
 (defun mj-server->entry (server)
   `((id   . ,server)
     (name . ,server)))
@@ -12,7 +14,7 @@
               (mapcar (lambda (str)
                         (car (split-string str " ")))
                       (split-string (with-temp-buffer
-                                      (insert-file-contents (expand-file-name "~/.ssh/known_hosts"))
+                                      (insert-file-contents (expand-file-name mj-known-hosts))
                                       (buffer-string))
                                     "\n"))))
 
