@@ -9,14 +9,15 @@
     (name . ,server)))
 
 (defun mj-hosts--candidates ()
-  (seq-filter (lambda (str)
-                (string-suffix-p ".intr" str))
-              (mapcar (lambda (str)
-                        (car (split-string str " ")))
-                      (split-string (with-temp-buffer
-                                      (insert-file-contents (expand-file-name mj-known-hosts))
-                                      (buffer-string))
-                                    "\n"))))
+  (seq-uniq
+   (seq-filter (lambda (str)
+                 (string-suffix-p ".intr" str))
+               (mapcar (lambda (str)
+                         (car (split-string str " ")))
+                       (split-string (with-temp-buffer
+                                       (insert-file-contents (expand-file-name mj-known-hosts))
+                                       (buffer-string))
+                                     "\n")))))
 
 (defun mj-servers-get-entries ()
   (mapcar 'mj-server->entry (mj-hosts--candidates)))
