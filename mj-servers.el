@@ -50,6 +50,15 @@
               (find-file (concat "/ssh:" host ":"))))
           (bui-list-get-marked-args 'general)))
 
+(defun mj-servers-list-tramp-sudo ()
+  "Display packages placed in the location at point."
+  (interactive)
+  (mapcar (lambda (entry)
+            (let ((host (car entry)))
+              (find-file (format "/ssh:%s|sudo:%s:"
+                                 host host))))
+          (bui-list-get-marked-args 'general)))
+
 (defun mj-servers-list-ping ()
   "Display packages placed in the location at point."
   (interactive)
@@ -109,6 +118,7 @@
 (let ((map mj-servers-list-mode-map))
   (define-key map (kbd "A") 'mj-servers-list-open-ansible-console)
   (define-key map (kbd "f") 'mj-servers-list-tramp)
+  (define-key map (kbd "F") 'mj-servers-list-tramp-sudo)
   (define-key map (kbd "s") 'mj-servers-list-open-terminal)
   (define-key map (kbd "S") 'mj-servers-list-xpanes-open-terminal)
   (define-key map (kbd "t") 'mj-servers-list-xpanes-open-top)
