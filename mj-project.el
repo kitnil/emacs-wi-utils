@@ -28,18 +28,26 @@
 (require 'bui)
 (require 'ivy) ;used in `majordomo-ivy-find-project'
 
-(defvar mj-projects-direcotory "~/majordomo")
+(defvar mj-groups-direcotory "~/majordomo")
+
+(defvar mj-projects-directories '("~/src" "~/archive/src"))
 
 (defun mj-project-candidates ()
   (delete-dups
-   (seq-filter #'file-directory-p
-               (apply #'append
-                      (mapcar (lambda (dir)
-                                (cddr ;skip "." and ".."
-                                 (directory-files dir t)))
-                              (seq-filter #'file-directory-p
-                                          (cddr ;skip "." and ".."
-                                           (directory-files (expand-file-name mj-projects-direcotory) t))))))))
+   (append (seq-filter #'file-directory-p
+                       (apply #'append
+                              (mapcar (lambda (dir)
+                                        (cddr ;skip "." and ".."
+                                         (directory-files dir t)))
+                                      (seq-filter #'file-directory-p
+                                                  (cddr ;skip "." and ".."
+                                                   (directory-files (expand-file-name mj-groups-direcotory) t))))))
+           (apply #'append
+                  (mapcar (lambda (directory)
+                            (seq-filter #'file-directory-p
+                                        (cddr ;skip "." and ".."
+                                         (directory-files (expand-file-name directory) t))))
+                          mj-projects-directories)))))
 
 (defun mj-project-ivy ()
   "Find Majordomo project."
