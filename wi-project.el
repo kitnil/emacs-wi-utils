@@ -1,4 +1,4 @@
-;;; mj-projects.el --- Majordomo project utilities   -*- lexical-binding: t; -*-
+;;; wi-projects.el --- wi project utilities   -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2020  Oleg Pykhalov
 
@@ -26,13 +26,13 @@
 ;;; Code:
 
 (require 'bui)
-(require 'ivy) ;used in `majordomo-ivy-find-project'
+(require 'ivy) ;used in `wi-ivy-find-project'
 
-(defvar mj-groups-direcotory "~/majordomo")
+(defvar wi-groups-direcotory "~/majordomo")
 
-(defvar mj-projects-directories '("~/src" "~/archive/src"))
+(defvar wi-projects-directories '("~/src" "~/archive/src"))
 
-(defun mj-project-candidates ()
+(defun wi-project-candidates ()
   (delete-dups
    (append (seq-filter #'file-directory-p
                        (apply #'append
@@ -41,43 +41,43 @@
                                          (directory-files dir t)))
                                       (seq-filter #'file-directory-p
                                                   (cddr ;skip "." and ".."
-                                                   (directory-files (expand-file-name mj-groups-direcotory) t))))))
+                                                   (directory-files (expand-file-name wi-groups-direcotory) t))))))
            (apply #'append
                   (mapcar (lambda (directory)
                             (seq-filter #'file-directory-p
                                         (cddr ;skip "." and ".."
                                          (directory-files (expand-file-name directory) t))))
-                          mj-projects-directories)))))
+                          wi-projects-directories)))))
 
-(defun mj-project-ivy ()
-  "Find Majordomo project."
+(defun wi-project-ivy ()
+  "Find wi project."
   (interactive)
   (find-file
-   (ivy-completing-read "Directory: " (mj-project-candidates))))
+   (ivy-completing-read "Directory: " (wi-project-candidates))))
 
-(defun mj-project->entry (project)
+(defun wi-project->entry (project)
   `((id   . ,project)
     (name . ,project)))
 
-(defun mj-project-get-entries ()
-  (mapcar 'mj-project->entry (mj-project-candidates)))
+(defun wi-project-get-entries ()
+  (mapcar 'wi-project->entry (wi-project-candidates)))
 
-(defun mj-project-list-describe (project)
+(defun wi-project-list-describe (project)
   (interactive)
   (magit-status project))
 
-(bui-define-interface mj-project list
-  :buffer-name "*Majordomo Project*"
-  :get-entries-function 'mj-project-get-entries
-  :describe-function 'mj-project-list-describe
-  :hint 'mj-project-list-hint
+(bui-define-interface wi-project list
+  :buffer-name "*wi Project*"
+  :get-entries-function 'wi-project-get-entries
+  :describe-function 'wi-project-list-describe
+  :hint 'wi-project-list-hint
   :format '((name nil 30 t))
   :sort-key '(name))
 
-(defun mj-project ()
+(defun wi-project ()
   "Display a list of buffers."
   (interactive)
-  (bui-get-display-entries 'mj-project 'list))
+  (bui-get-display-entries 'wi-project 'list))
 
-(provide 'mj-projects)
-;;; mj-projects.el ends here
+(provide 'wi-projects)
+;;; wi-projects.el ends here
