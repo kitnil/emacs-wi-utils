@@ -32,16 +32,20 @@
 
 (defvar wi-projects-directories '("~/src" "~/archive/src"))
 
+(defun wi-project-candidates-groups-direcotory ()
+  (seq-filter #'file-directory-p
+              (apply #'append
+                     (mapcar (lambda (dir)
+                               (cddr ;skip "." and ".."
+                                (directory-files dir t)))
+                             (seq-filter #'file-directory-p
+                                         (cddr ;skip "." and ".."
+                                          (directory-files (expand-file-name wi-groups-direcotory)
+                                                           t)))))))
+
 (defun wi-project-candidates ()
   (delete-dups
-   (append (seq-filter #'file-directory-p
-                       (apply #'append
-                              (mapcar (lambda (dir)
-                                        (cddr ;skip "." and ".."
-                                         (directory-files dir t)))
-                                      (seq-filter #'file-directory-p
-                                                  (cddr ;skip "." and ".."
-                                                   (directory-files (expand-file-name wi-groups-direcotory) t))))))
+   (append (wi-project-candidates-groups-direcotory)
            (apply #'append
                   (mapcar (lambda (directory)
                             (seq-filter #'file-directory-p
