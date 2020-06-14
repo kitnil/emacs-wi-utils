@@ -56,21 +56,22 @@ newspace."
 
 (let ((commit (current-commit)))
   (package
-    (name "emacs-wi-project")
-    (version (string-append (package-version emacs-guix)
-                            "-" (string-take commit 7)))
+    (name "emacs-wi-utils")
+    (version (string-append "0.0.1" "-" (string-take commit 7)))
     (source (local-file %source-dir
                         #:recursive? #t
                         #:select? (git-predicate %source-dir)))
     (build-system emacs-build-system)
     (inputs
      `(("emacs-bui" ,emacs-bui)
+       ("emacs-browse-at-remote" ,emacs-browse-at-remote)
+       ("emacs-magit" ,emacs-magit)
        ("emacs-ivy" ,emacs-ivy)
        ("emacs-s" ,emacs-s)))
     (synopsis "Ivy procedures for Git project management")
     (description "This package provides several Emacs's Ivy procedures to work
 with Git-based projects.")
-    (home-page "https://github.com/kitnil/emacs-wi-project")
+    (home-page "https://github.com/kitnil/emacs-wi-utils")
     (license license:gpl3+)))
 
 ;;; guix.scm ends here
