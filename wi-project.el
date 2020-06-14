@@ -20,8 +20,7 @@
 
 ;;; Commentary:
 
-;; This Emacs library provides utilities to control Majodromo Git
-;; projects.
+;; This Emacs library provides utilities to control Git projects.
 
 ;;; Code:
 
