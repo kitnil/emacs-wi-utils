@@ -66,6 +66,13 @@
     (find-file ".")
     (browse-at-remote)))
 
+(defun wi-project-browse-at-remote ()
+  "Call `browse-at-remote' with project."
+  (interactive)
+  (let ((default-directory (ivy-completing-read "Directory: " (wi-project-candidates))))
+    (find-file ".")
+    (browse-at-remote)))
+
 (defun wi-project->entry (project)
   `((id   . ,project)
     (name . ,project)))
