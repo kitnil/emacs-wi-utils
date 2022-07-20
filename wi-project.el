@@ -35,7 +35,12 @@
   :prefix "wi-project-"
   :group  'wi-project)
 
-(defcustom wi-groups-direcotory
+(defcustom wi-groups-direcotories-git
+  nil "Filter projects by .git directory."
+  :type 'boolean
+  :group 'wi-project)
+
+(defcustom wi-groups-direcotories
   nil "Directories with group based project layout."
   :type 'string
   :group 'wi-project)
@@ -47,15 +52,23 @@
 
 (defun wi-project-candidates-groups-direcotory ()
   "Return a list of projects with group based layout."
-  (seq-filter #'file-directory-p
-              (apply #'append
-                     (mapcar (lambda (dir)
-                               (cddr ;skip "." and ".."
-                                (directory-files dir t)))
-                             (seq-filter #'file-directory-p
-                                         (cddr ;skip "." and ".."
-                                          (directory-files (expand-file-name wi-groups-direcotory)
-                                                           t)))))))
+  (seq-reduce #'append
+              (mapcar (lambda (wi-groups-direcotory)
+                        (seq-filter (if wi-groups-direcotories-git
+                                        #'(lambda (directory)
+                                            (and (file-directory-p directory)
+                                                 (file-exists-p (concat (expand-file-name directory) "/.git"))))
+                                      #'file-directory-p)
+                                    (apply #'append
+                                           (mapcar (lambda (dir)
+                                                     (cddr ;skip "." and ".."
+                                                      (directory-files dir t)))
+                                                   (seq-filter #'file-directory-p
+                                                               (cddr ;skip "." and ".."
+                                                                (directory-files (expand-file-name wi-groups-direcotory)
+                                                                                 t)))))))
+                      wi-groups-direcotories)
+              '()))
 
 (defun wi-project-candidates ()
   "Return a list of projects."
@@ -65,7 +78,7 @@
                                                    (cddr ;skip "." and ".."
                                                     (directory-files (expand-file-name directory) t))))
                                      wi-projects-directories))))
-    (if wi-groups-direcotory
+    (if wi-groups-direcotories
         (delete-dups
          (append (wi-project-candidates-groups-direcotory)
                  project-dirs)))))
